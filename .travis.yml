@@ -7,16 +7,10 @@ cache:
   directories:
   - $HOME/.m2
 
-# https://docs.travis-ci.com/user/database-setup/#PostgreSQL
-services:
-  - postgresql
-
 before_script:
   - psql -c 'create database medicizer' -U postgres
   - psql -c 'create user "medicizer"; grant all privileges on database medicizer to "medicizer"' -U postgres
 
-addons:
-  postgresql: "10"
 # https://docs.travis-ci.com/user/customizing-the-build#Building-Specific-Branches
 branches:
   only:
