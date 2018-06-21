@@ -3,6 +3,7 @@ package com.github.itavgur.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
@@ -22,27 +23,30 @@ import java.util.Properties;
 @Configuration
 @EnableJpaRepositories(value = "com.github.itavgur.repository")
 @EnableTransactionManagement
-@PropertySource("classpath:program.properties")
 public class SpringDb {
+
+    @Configuration
+    @Profile("prod")
+    @PropertySource("classpath:program.properties")
+    static class Prod {
+    }
+
+    @Configuration
+    @Profile("dev")
+    @PropertySource({"classpath:program.dev.properties"})
+    static class Dev {
+    }
 
     @Value("${DB_DRIVER}")
     private String dbDriver;
     @Value("${DB_URL}")
     private String dbUrl;
-    @Value("${DB_IP}")
-    private String dbIp;
-    @Value("${DB_DATABASE}")
-    private String dbDatabase;
-    @Value("${DB_USER}")
-    private String dbUser;
-    @Value("${DB_PASSWORD}")
-    private String dbPassword;
-    @Value("${DB_PORT}")
-    private String dbPort;
-    @Value("classpath:db/initDB_hsqldb.sql")
+    @Value("${SQL_INIT_SCRIPT}")
     private Resource initDbScript;
-    @Value("classpath:db/populateDB.sql")
+    @Value("${SQL_POPULATE_SCRIPT}")
     private Resource populateDbScript;
+    @Value("${INIT_DB}")
+    private Boolean initDb;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -61,7 +65,9 @@ public class SpringDb {
     public DataSourceInitializer getDataSourceInitializer() {
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(getDataSource());
-        initializer.setDatabasePopulator(getDatabasePopulator());
+        if (initDb) {
+            initializer.setDatabasePopulator(getDatabasePopulator());
+        }
         return initializer;
     }
 

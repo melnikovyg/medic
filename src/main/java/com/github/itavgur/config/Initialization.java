@@ -19,6 +19,9 @@ public class Initialization implements WebApplicationInitializer {
     public void onStartup(javax.servlet.ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
 
+//        //profile
+        servletContext.setInitParameter("spring.profiles.default", "prod");
+
         //root
         rootContext.register(SpringContext.class, SpringDb.class);
         servletContext.addListener(new ContextLoaderListener(rootContext));

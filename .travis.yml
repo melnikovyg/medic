@@ -21,6 +21,9 @@ addons:
 branches:
   only:
   - master
+  - travis
+  - frontdev
+  - backdev
 
 #https://docs.travis-ci.com/user/environment-variables#Default-Environment-Variables
 env:
